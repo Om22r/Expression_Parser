@@ -10,6 +10,6 @@ object CharExtensions {
         if (this.operator()) {
             Operator.values().find { it.value == this }!!
         } else {
-            throw RuntimeException("")
+            throw Exception("")
         }
 }

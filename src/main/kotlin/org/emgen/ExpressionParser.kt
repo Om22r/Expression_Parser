@@ -8,31 +8,10 @@ import org.emgen.extensions.StringExtensions.remove
 import org.emgen.extensions.CharExtensions.operator
 import org.emgen.extensions.CharExtensions.toOperator
 
-class ExpressionExecutor {
+class ExpressionParser {
 
     companion object {
-        fun evaluateExpression(expression: String): BigDecimal {
-            val stack = Stack<Operand>()
-
-            parseExpression(expression).forEach {
-                if (it !is Operator) {
-                    stack.push(it as Operand)
-                } else {
-                    val inputY = stack.pop()
-
-                    if (it.unary) {
-                        stack.push(it.evaluate(inputY))
-                    } else {
-                        val inputX = stack.pop()
-                        stack.push(it.evaluate(inputX, inputY))
-                    }
-                }
-            }
-
-            return stack.pop().value
-        }
-
-        fun parseExpression(expression: String): List<Token> {
+        fun parseExpression(expression: String): Expression {
             val output = ArrayList<Token>()
             val stack = Stack<Operator>()
 
@@ -50,11 +29,18 @@ class ExpressionExecutor {
                         stack.pop()
                     } else {
                         for (index in stack.indices) {
-                            if (stack.empty() || stack.peek() == Operator.LEFT_PARENTHESIS || stack.peek() == Operator.RIGHT_PARENTHESIS) {
+                            if (
+                                stack.empty() ||
+                                stack.peek() == Operator.LEFT_PARENTHESIS ||
+                                stack.peek() == Operator.RIGHT_PARENTHESIS
+                            ) {
                                 break
                             }
                             val precedence = token.precedence - stack.peek().precedence
-                            if ((token.associativity == Associativity.LEFT && precedence < 1) || (token.associativity == Associativity.RIGHT && precedence < 0)) {
+                            if (
+                                (Associativity.LEFT.isAssociative(token) && precedence < 1) ||
+                                (Associativity.RIGHT.isAssociative(token) && precedence < 0)
+                            ) {
                                 output.add(stack.pop())
                             }
                         }
@@ -65,7 +51,7 @@ class ExpressionExecutor {
                 }
             }
             repeat(stack.size) { output.add(stack.pop()) }
-            return output
+            return Expression(output)
         }
 
         private fun createTokens(expression: String): List<Token> = expression

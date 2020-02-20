@@ -4,7 +4,7 @@ object LongExtensions {
 
     fun Long.factorial(): Long {
         if (this < 0) {
-            throw RuntimeException("")
+            throw Exception("")
         }
         if (this == 0L) {
             return 1L

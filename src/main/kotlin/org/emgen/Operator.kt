@@ -46,10 +46,10 @@ enum class Operator(
             }
             if (this == DIVISION) {
                 if (inputX.signum() == 0) {
-                    throw RuntimeException("")
+                    throw Exception("")
                 }
                 if (inputY.signum() == 0) {
-                    throw RuntimeException("")
+                    throw Exception("")
                 }
                 return Operand(inputX / inputY)
             }
@@ -58,6 +58,6 @@ enum class Operator(
             }
         }
 
-        throw RuntimeException("")
+        throw Exception("")
     }
 }

@@ -2,5 +2,7 @@ package org.emgen
 
 enum class Associativity {
     LEFT,
-    RIGHT
+    RIGHT;
+
+    fun isAssociative(operator: Operator): Boolean = operator.associativity == this
 }
